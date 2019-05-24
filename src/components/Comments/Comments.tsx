@@ -1,22 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { translate } from 'react-switch-lang';
 
 import classes from './Comments.module.scss';
 import firebase from '../../global/firebase';
 import { COMMENTS, USERS, POST_LIKE } from '../../constants/fbCollections';
 import PostCreateBox from '../Posts/PostCreateBox/PostCreateBox';
 import Spinner from '../UI/Spinner/Spinner';
-import { ADD_POST } from '../../constants/actions';
+import { ADD_POST, SET_POSTS } from '../../constants/actions';
 import StateContext from '../../context/state-context';
 import PostItem from '../Posts/PostItem/PostItem';
 import { Post } from '../Posts/Posts.model';
 
-const Comments = (props: any) => {
+const Comments = ({ t, ...props }: any) => {
     const currentUser: any = firebase.auth().currentUser;
     const [loading, setLoading] = useState(true);
+    const [noComments, setNoComments] = useState(false);
     const [{ posts }, dispatch]: any = useContext(StateContext);
-
-    console.log(posts);
-    
 
     useEffect(() => {
         initComments();
@@ -24,12 +23,23 @@ const Comments = (props: any) => {
     }, []);
 
     const initComments = () => {
+        dispatch({
+            type: SET_POSTS,
+            posts: []
+        });
+
         firebase.firestore()
             .collection(COMMENTS)
             .where('dataId', '==', props.dataId)
             .where('payload', '==', props.payload)
             .get()
             .then(querySnap => {
+                if (querySnap.empty) {
+                    setLoading(false);
+                    setNoComments(true);
+                    return;
+                }
+
                 querySnap.forEach(async (doc: any) => {
                     const userDoc = await firebase.firestore()
                         .collection(USERS)
@@ -40,7 +50,7 @@ const Comments = (props: any) => {
                         .doc(`${COMMENTS}/${doc.id}/${POST_LIKE}/${currentUser.uid}`)
                         .get()
                         .then((linkDocumen: any) => linkDocumen.exists);
-                    
+
 
                     const comment = {
                         id: doc.id,
@@ -64,33 +74,35 @@ const Comments = (props: any) => {
 
     return (
         <div className={classes.Comments}>
-            <h1>Comments</h1>
-            
+            <h1>{t("comments.title")}</h1>
+
             <div className={classes.Post}>
-                {loading ? <Spinner /> : (
-                    posts.posts.map((post: Post) => (
-                        <PostItem
-                            key={post.id}
-                            hideComment
-                            type="comment"
-                            postId={post.id}
-                            content={post.content}
-                            likes={post.likes}
-                            creator={post.creator}
-                            image={post.image ? post.image : null}
-                            liked={post.liked}
-                        />
-                    ))
-                )}
+                {noComments ? <p>{t("comments.noComment")}</p>
+                    :
+                    loading ? <Spinner /> : (
+                        posts.posts.map((post: Post) => (
+                            <PostItem
+                                key={post.id}
+                                hideComment
+                                type="comment"
+                                postId={post.id}
+                                content={post.content}
+                                likes={post.likes}
+                                creator={post.creator}
+                                image={post.image ? post.image : null}
+                                liked={post.liked}
+                            />
+                        ))
+                    )}
             </div>
 
-            <PostCreateBox 
+            <PostCreateBox
                 type="comment"
-                dataId={props.dataId} 
-                payload={props.payload} 
+                dataId={props.dataId}
+                payload={props.payload}
             />
         </div>
     )
 }
 
-export default Comments;
+export default translate(Comments);

@@ -22,7 +22,6 @@ const Post = (props: any) => {
     const initPost = () => {
         setLoading(true);
         
-
         firebase.firestore()
             .collection(POSTS)
             .doc(props.match.params.postId)

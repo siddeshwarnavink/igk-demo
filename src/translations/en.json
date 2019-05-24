@@ -36,5 +36,10 @@
         "follow": "Follow",
         "editProfile": "Edit Profile",
         "unfollow": "Unfollow"
+    },
+
+    "comments": {
+        "title": "Comments",
+        "noComment": "Be the first to comment!"
     }
 }
