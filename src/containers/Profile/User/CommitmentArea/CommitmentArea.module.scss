@@ -1,0 +1,20 @@
+@import "../../../../global/variables.scss";
+
+.CommitmentArea {
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #ffffff;
+    height: 300px;
+
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: transparent;
+        border: 0;
+        font-size: 21px;
+        outline: 0;
+        cursor: pointer;
+        color: $primary-color;
+        font-weight: bold;
+    }    
+}

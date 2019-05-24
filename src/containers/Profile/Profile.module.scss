@@ -1,0 +1,39 @@
+.Profile {
+    margin-top: 20px;
+
+    .Container {
+        -webkit-animation: fading .5s;
+        animation: fading .5s;
+        margin: auto;
+        max-width: 500px;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+
+        .DPSection {
+            text-align: center;
+            width: 100%;
+
+            img {
+                border-radius: 50%;
+                height: 150px;
+                width: 150px;
+            }
+
+            input {
+                display: block;
+            }
+        }
+
+        h1 {
+            text-align: center;
+        }
+    }
+}
+
+
+@media (max-width:600px) {
+    .Profile {
+        margin: 0;
+    }
+}

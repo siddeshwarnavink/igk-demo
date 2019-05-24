@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+  background-color: #efefef;
+}
+
+span.error-text {
+  color: #f00;
+  font-weight: bold;
+}
+
+@import "./styles/inputs.scss";
+@import "./styles/tabs.scss";

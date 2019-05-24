@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    
-    <title>Igk</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+     <head>
+          <meta charset="utf-8" />
+          <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#9c27b0" />
+
+          <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+          <link
+               href="https://fonts.googleapis.com/css?family=Open+Sans|Pacifico&display=swap"
+               rel="stylesheet"
+          />
+          <link
+               href="https://fonts.googleapis.com/icon?family=Material+Icons"
+               rel="stylesheet"
+          />
+
+          <title>Igk</title>
+     </head>
+     <body>
+          <noscript>You need to enable JavaScript to run this app.</noscript>
+          <div id="root"></div>
+
+          <script>
+               UPLOADCARE_PUBLIC_KEY = 'cc3ee5a1892267f937d6';
+               UPLOADCARE_EFFECTS = 'crop,rotate,mirror,flip,enhance,sharp,blur,grayscale,invert';
+               UPLOADCARE_IMAGES_ONLY = true;
+               UPLOADCARE_PREVIEW_STEP = true;
+          </script>
+          
+          <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+          <script src="https://ucarecdn.com/libs/widget-tab-effects/1.x/uploadcare.tab-effects.js"></script>
+     </body>
 </html>

@@ -1,0 +1,15 @@
+.Comments {
+    padding: 10px;
+
+    .Post {
+        width: 30%;
+    }
+}
+
+@media (max-width:600px) {
+    .Comments {
+        .Post {
+            width: 100%;
+        }
+    }
+}

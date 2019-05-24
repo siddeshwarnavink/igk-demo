@@ -1,0 +1,32 @@
+@import "../../../global/variables.scss";
+@import "../../../global/animations.scss";
+
+.MainNavigation {
+    -webkit-animation:animatetop 0.2s;
+    animation:animatetop 0.2s;
+    padding: 10px 21px;
+    background-color: $primary-color;
+    color: $primary-content-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .BrandLogo {
+        font-family: 'Pacifico', cursive;
+
+        a {
+            text-decoration: none;
+            color: $primary-content-color;
+            
+            h1 {
+                margin: 0;
+                font-weight: bold;
+                font-size: 1.8rem;
+            }
+        }
+    }
+
+    .Spacer {
+        flex: 1;
+    }
+}

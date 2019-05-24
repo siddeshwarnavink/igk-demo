@@ -1,0 +1,77 @@
+.User {
+    .Container {
+        padding: 20px;
+        display: flex;
+
+        .ProfileArea {
+            padding: 10px;
+            text-align: center;
+            width: 20%;
+
+            img {
+                width: 250px;
+                border-radius: 50%;
+                height: 250px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .DataArea {
+                display: flex;
+                width: 100%;
+
+                div {
+                    cursor: pointer;
+                    display: block;
+                    text-decoration: none;
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                    margin-left: 10%;
+
+                    .NumberCircle {
+                        border-radius: 50%;
+                        width: 36px;
+                        height: 36px;
+                        padding: 8px;
+                        background: transparent;
+                        border: 2px solid #777;
+                        color: #777;
+                        text-align: center;
+                        margin-left: 10%;
+                        font: 32px Arial, sans-serif;
+                    }
+                }
+            }
+        }
+
+        .ContentArea {
+            width: 45%;
+            margin-left: 12px;
+            padding: 10px;
+        }
+    }
+}
+
+@media (max-width:600px) {
+    .User {
+        .Container {
+            padding: 0;
+            display: block;
+
+            .ProfileArea {
+                .DataArea {
+                    margin-left: 7%;
+                    width: 90%;
+                }
+            }
+
+            .ProfileArea, .ContentArea {
+                width: 100%;
+                margin-left: 0px;
+                padding: 0px;
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+{
+    "navigation": {
+        "profile": "Profile",
+        "auth": "Auth"
+    },
+
+    "auth": {
+        "signIntitle": "Sign in to your account",
+        "signUptitle": "Create your account",
+        "emailPlaceHolder": "E-mail address",
+        "usernamePlaceHolder": "Username",
+        "pwdPlaceHolder": "Password",
+        "signInButton": "Sign in",
+        "signUpButton": "Sign up",
+        "switchToSignUp": "SWITCH TO SIGN UP",
+        "switchToSignIn": "SWITCH TO SIGN IN"
+    },
+
+    "posts": {
+        "postBoxPlaceholder": "Whats up",
+        "postBoxButton": "Post"
+    }, 
+
+    "profile": {
+        "profileTitle": "Update Profile",
+        "updateButton": "Update",
+        "profileUpdateSuccess": "Profile updated!",
+        "usernameExists": "That username is already taked"
+    },
+
+    "userPage": {
+        "postsTitle": "Posts",
+        "imagesTitle": "Images",
+        "followers": "Followers",
+        "following": "Following",
+        "follow": "Follow",
+        "editProfile": "Edit Profile",
+        "unfollow": "Unfollow"
+    }
+}

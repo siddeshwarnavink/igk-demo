@@ -1,0 +1,27 @@
+@import "../../../../global/variables.scss";
+
+a.NavigationItem {
+    color: $primary-content-color;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    margin-left: 10px;
+    font-size: 20px;
+
+    i {
+        font-size: 20px;
+        padding: 5px;
+    }
+}
+
+@media (max-width:600px) {
+    a.NavigationItem {
+        span {
+            display: none
+        }
+
+        i {
+            font-size: 1.5rem;
+        }
+    }
+}

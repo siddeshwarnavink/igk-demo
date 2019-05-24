@@ -1,0 +1,44 @@
+$finalHeight: 250px;
+$finalWidth: 3 * $finalHeight;
+$scrollBarHeight: 1px;
+
+::-webkit-scrollbar {
+  width: $scrollBarHeight;
+  height: $scrollBarHeight;
+}
+
+::-webkit-scrollbar-button {
+  width: $scrollBarHeight;
+  height: $scrollBarHeight;
+}
+
+.Users {
+    position: absolute;
+    display: block;
+    height: 40%;
+    max-height: $finalWidth;
+    margin: 0;
+    padding-top: $scrollBarHeight;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: rotate(-90deg) translateY(-$finalHeight);
+    transform-origin: right top;
+    & > div {
+        display: block;
+        padding: 5px;
+        transform: rotate(90deg);
+        transform-origin: right top;
+    }
+    padding: $finalHeight 0 0 0;
+    & > div {
+        width: $finalHeight;
+        height: $finalHeight;
+        // margin: 10px 0;
+    }
+}
+
+@media (max-width:600px) {
+  .Users {
+    height: 0px;
+  }
+}

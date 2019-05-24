@@ -1,0 +1,25 @@
+@import "../../global/animations.scss";
+
+.Auth {
+    margin-top: 20px;
+    
+    .Container {
+        -webkit-animation: fading .5s;
+        animation: fading .5s;
+        margin: auto;
+        max-width: 500px;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+
+        h1 {
+            text-align: center;
+        }
+    }
+}
+
+@media (max-width:600px) {
+    .Auth {
+        margin: 0;
+    }
+}
