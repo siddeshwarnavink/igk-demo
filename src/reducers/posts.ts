@@ -15,10 +15,10 @@ export default (state: any, action: any) => {
             return {
                 ...state,
                 posts: [
+                    ...state.posts,
                     {
                         ...action.post
                     },
-                    ...state.posts
                 ]
             }
 

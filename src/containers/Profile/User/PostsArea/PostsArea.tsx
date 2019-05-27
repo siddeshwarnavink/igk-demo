@@ -13,20 +13,53 @@ const PostsArea = (props: any) => {
     const [loading, setLoading] = useState(false);
     const [{ posts }, dispatch]: any = useContext(StateContext);
     const currentUser: any = firebase.auth().currentUser;
+    const [lastDoc, setLastDoc]: any = useState(null);
+    const [firstDoc, setFirstDoc]: any = useState(null);
+    const [isEnd, setIsEnd] = useState(false);
 
     useEffect(() => {
         dispatch({
             type: SET_POSTS,
             posts: []
         });
+
         setLoading(true);
 
-        firebase.firestore()
+        loadPosts();
+    }, [dispatch, currentUser, props.userId]);
+
+    const loadPosts = async () => {
+        let query = firebase.firestore()
             .collection(POSTS)
             .where('creator', '==', props.userId)
-            .orderBy("postedAt", "asc")
-            .get()
+            .orderBy("postedAt", "desc")
+        
+        const totalCount = await firebase.firestore().collection(POSTS).where('creator', '==', props.userId).get().then(snap => snap.size);
+
+
+        if (posts.posts.length >= totalCount) {
+            setIsEnd(true);
+        }
+
+
+        if (lastDoc !== null && firstDoc !== null) {
+            query = query.startAfter(lastDoc)
+                    // .endBefore(firstDoc)
+                    .limit(3);
+        } else {
+            query = query.limit(3);
+        }
+
+        query.get()
             .then(quertSnapshort => {
+                setLastDoc(quertSnapshort.docs[quertSnapshort.docs.length - 1]);
+                setFirstDoc(quertSnapshort.docs[0]);
+
+                if (quertSnapshort.size === 0) {
+                    setLoading(false);
+                    return;
+                }
+
                 quertSnapshort.forEach(async (doc: any) => {
                     const userDoc = await firebase.firestore()
                         .collection(USERS)
@@ -57,7 +90,7 @@ const PostsArea = (props: any) => {
                     })
                 });
             })
-    }, [dispatch, currentUser, props.userId]);
+    }
 
     return (
         <div>
@@ -65,7 +98,11 @@ const PostsArea = (props: any) => {
                 <React.Fragment>
                     {currentUser.uid === props.userId && <PostCreateBox />}
                     <CommitmentArea userId={props.userId} />
-                    <Posts posts={posts.posts} />
+                    <Posts 
+                        posts={posts.posts}
+                        loadMore={loadPosts}
+                        isEnd={isEnd}
+                    />
                 </React.Fragment>
             )}
         </div>

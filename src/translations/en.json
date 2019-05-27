@@ -18,7 +18,8 @@
 
     "posts": {
         "postBoxPlaceholder": "Whats up",
-        "postBoxButton": "Post"
+        "postBoxButton": "Post",
+        "noPosts": "No more to see!"
     }, 
 
     "profile": {

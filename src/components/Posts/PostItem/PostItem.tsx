@@ -40,25 +40,36 @@ const PostItem = (props: any) => {
         }
     }
 
+    const content = props.content.split(' ').map((word: string) => {
+        if (word[0] === '@') {
+            return <React.Fragment>{` `}<Link to={`${USER_URI}${word.substr(1)}`}>{word}</Link>{` `}</React.Fragment>
+        } else if (word.substring(0, 5) === "http:" || word.substring(0, 6) === "https:") {
+            return <React.Fragment>{` `}<a target="_blank" href={word}>{word}</a>{` `}</React.Fragment>
+        }
+
+        return word;
+    }).join(' ');
+
     return (
         <div className={classes.PostItem}>
             <div className={classes.AvatarSection}>
                 <img
-                    src={!props.creator.photoURL || props.creator.photoURL === '' ?  defaultAvatar : props.creator.photoURL} 
+                    src={!props.creator.photoURL || props.creator.photoURL === '' ? defaultAvatar : props.creator.photoURL}
                     alt="Loading..."
                 />
                 <Link to={`${USER_URI}${props.creator.username}`}>@{props.creator.username}</Link>
             </div>
 
+            {props.image && (
+                <img
+                    className={classes.PostImg}
+                    src={props.image}
+                    alt="Loading..."
+                />
+            )}
+
             <div className={classes.PostContent}>
-                {props.image && (
-                    <img
-                        className="postImg"
-                        src={props.image}
-                        alt="Loading..."
-                    />
-                )}
-                {props.content}
+                {content}
             </div>
 
             <div className={classes.PostLinks}>

@@ -14,6 +14,9 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [{ posts }, dispatch]: any = useContext(StateContext);
     const currentUser: any = firebase.auth().currentUser;
+    const [lastDoc, setLastDoc]: any = useState(null);
+    const [firstDoc, setFirstDoc]: any = useState(null);
+    const [isEnd, setIsEnd] = useState(false);
 
     useEffect(() => {
         dispatch({
@@ -21,12 +24,34 @@ const Home = () => {
             posts: []
         });
 
-        firebase.firestore()
+        loadPosts();
+    }, []);
+
+    const loadPosts = async () => {
+        let query = firebase.firestore()
             .collection(POSTS)
-            .orderBy("postedAt", "asc")
-            .get()
+            .orderBy("postedAt", "desc")
+
+        const totalCount = await firebase.firestore().collection(POSTS).get().then(snap => snap.size);
+
+        if (posts.posts.length >= totalCount) {
+            setIsEnd(true);
+        }
+
+        if (lastDoc !== null && firstDoc !== null) {
+            query = query.startAfter(lastDoc)
+                    // .endBefore(firstDoc)
+                    .limit(3);
+        } else {
+            query = query.limit(3);
+        }
+
+        query.get()
             .then(quertSnapshort => {
-                if(quertSnapshort.size === 0) {
+                setLastDoc(quertSnapshort.docs[quertSnapshort.docs.length - 1]);
+                setFirstDoc(quertSnapshort.docs[0]);
+
+                if (quertSnapshort.size === 0) {
                     setLoading(false);
                     return;
                 }
@@ -41,7 +66,7 @@ const Home = () => {
                         .doc(`${POSTS}/${doc.id}/${POST_LIKE}/${currentUser.uid}`)
                         .get()
                         .then((linkDocumen: any) => linkDocumen.exists);
-                    
+
 
                     const post = {
                         id: doc.id,
@@ -61,7 +86,7 @@ const Home = () => {
                     })
                 });
             });
-    }, [dispatch, currentUser]);
+    }
 
     return (
         <React.Fragment>
@@ -69,7 +94,11 @@ const Home = () => {
                 {!loading ? (
                     <React.Fragment>
                         <PostCreateBox />
-                        <Posts posts={posts.posts} />
+                        <Posts
+                            posts={posts.posts}
+                            loadMore={loadPosts}
+                            isEnd={isEnd}
+                        />
                     </React.Fragment>
                 ) : <Spinner />}
             </div>
