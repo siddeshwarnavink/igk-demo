@@ -47,8 +47,8 @@ const PostItem = (props: any) => {
             return <React.Fragment>{` `}<a target="_blank" href={word}>{word}</a>{` `}</React.Fragment>
         }
 
-        return word;
-    }).join(' ');
+        return <React.Fragment>{` `}{word}{` `}</React.Fragment>;
+    });
 
     return (
         <div className={classes.PostItem}>
