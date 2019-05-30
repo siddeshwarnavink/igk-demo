@@ -3,4 +3,8 @@
 .sc-launcher, .sc-header {
     background-color: $secondary-color;
     color: $secondary-content-color;
+
+    .sc-header--img {
+        width: 25px;
+    }
 }

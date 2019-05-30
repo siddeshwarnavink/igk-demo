@@ -6,3 +6,4 @@ declare module 'uploadcare-widget';
 declare module 'react-tabs';
 declare module 'react-infinite-scroll-component';
 declare module 'react-chat-window';
+declare module 'randombytes';

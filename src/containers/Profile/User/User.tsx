@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Launcher } from 'react-chat-window'
 import { translate } from 'react-switch-lang';
+import randomBytes from 'randombytes'
 
 import classes from './User.module.scss';
 import defaultAvatar from '../../../static/images/default-avatar.png';
@@ -10,6 +11,7 @@ import { USERS, USERS_FOLLOWING, USERS_FOLLOWERS, CONVERSATION, CONVERSATION_MSG
 import { PROFILE_URI } from '../../../constants/navigation';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import PostsTab from './PostsArea/PostsArea';
+import { CHAT_ITEM } from '../../../constants/filePath';
 
 const User = ({ t, ...props }: any) => {
     const [profileLoading, setProfileLoading] = useState(true);
@@ -209,6 +211,38 @@ const User = ({ t, ...props }: any) => {
             });
     }
 
+    const onFilesSelectedHandler = (fileList: FileList) => {
+        console.log(fileList);
+        const uploadTask = firebase.storage().ref().child(`${CHAT_ITEM}${randomBytes(16)}-${fileList[0].name}`).put(fileList[0]);
+    
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snap) => {
+            console.log("Snap", snap);
+        }, (err) => {
+            console.log("Err", err);
+        }, () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
+                console.log('File available at', downloadURL);
+
+                let conversation = await initConv();
+
+                // Create the message
+                await firebase.firestore()
+                    .collection(CONVERSATION)
+                    .doc(conversation.id)
+                    .collection(CONVERSATION_MSGS)
+                    .add({
+                        type: 'file',
+                        data: {
+                            url: downloadURL,
+                            fileName: fileList[0].name
+                        },
+                        postedAt: new Date().toISOString(),
+                        author: currentUser.uid
+                    });
+            })
+        })
+    } 
+
     return (
         <div className={classes.User}>
             <div className={classes.Container}>
@@ -248,13 +282,14 @@ const User = ({ t, ...props }: any) => {
                                 teamName: `@${profileData.username}`,
                                 imageUrl: !profileData.photoURL || profileData.photoURL === '' ? defaultAvatar : profileData.photoURL + '-/preview/25x25/'
                             }}
-                            showEmoji={false}
+                            showEmoji
                             isOpen={messageOpen}
                             messageList={msgs}
                             handleClick={() => {
                                 setMessageOpen(!messageOpen)
                             }}
                             onMessageWasSent={onMessageWasSentHandler}
+                            onFilesSelected={onFilesSelectedHandler}
                         />
                     </React.Fragment>
                 ) : <Spinner />}
