@@ -1,7 +1,8 @@
 {
     "navigation": {
         "profile": "Profile",
-        "auth": "Auth"
+        "auth": "Auth",
+        "indirect": "Indirect"
     },
 
     "auth": {
@@ -42,5 +43,10 @@
     "comments": {
         "title": "Comments",
         "noComment": "Be the first to comment!"
+    },
+
+    "indirect": {
+        "title": "Conversations",
+        "noConvs": "No Conversation found. Visit your friend's profile and click at 💬 button"
     }
 }

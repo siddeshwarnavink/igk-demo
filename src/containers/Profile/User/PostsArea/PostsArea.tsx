@@ -26,6 +26,7 @@ const PostsArea = (props: any) => {
         setLoading(true);
 
         loadPosts();
+        // eslint-disable-next-line
     }, [dispatch, currentUser, props.userId]);
 
     const loadPosts = async () => {

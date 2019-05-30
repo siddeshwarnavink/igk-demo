@@ -1,0 +1,10 @@
+.Conversations {
+    list-style-type: none;
+}
+
+@media (max-width:600px) {
+    .Conversations {
+        margin: 0;
+        padding: 0;
+    }
+}

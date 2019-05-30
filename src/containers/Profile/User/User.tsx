@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Launcher } from 'react-chat-window'
 import { translate } from 'react-switch-lang';
 
 import classes from './User.module.scss';
 import defaultAvatar from '../../../static/images/default-avatar.png';
 import authRequired from '../../../hoc/authRequired/authRequired';
 import firebase from '../../../global/firebase';
-import { USERS, USERS_FOLLOWING, USERS_FOLLOWERS } from '../../../constants/fbCollections';
+import { USERS, USERS_FOLLOWING, USERS_FOLLOWERS, CONVERSATION, CONVERSATION_MSGS } from '../../../constants/fbCollections';
 import { PROFILE_URI } from '../../../constants/navigation';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import PostsTab from './PostsArea/PostsArea';
@@ -14,7 +15,9 @@ const User = ({ t, ...props }: any) => {
     const [profileLoading, setProfileLoading] = useState(true);
     const [profileData, setProfileData]: any = useState({});
     const [buttonState, setButtonState] = useState(0);
+    const [messageOpen, setMessageOpen] = useState(false);
     const currentUser: any = firebase.auth().currentUser;
+    const [msgs, setMsgs] = useState([])
 
     // Firestore util
     const increment = firebase.firestore.FieldValue.increment(1);
@@ -30,12 +33,12 @@ const User = ({ t, ...props }: any) => {
         setProfileData({
             id: userQuerySnapshot.docs[0].id,
             ...userQuerySnapshot.docs[0].data()
-        })
+        });
 
         const searchFollowingList = await firebase.firestore()
             .doc(`${USERS}/${userQuerySnapshot.docs[0].id}/${USERS_FOLLOWERS}/${currentUser.uid}`)
             .get();
-        
+
         if (currentUser.displayName === props.match.params.userId) {
             setButtonState(2);
         }
@@ -47,15 +50,30 @@ const User = ({ t, ...props }: any) => {
             }
         }
 
-        setProfileLoading(false);        
+        setProfileLoading(false);
     }
 
     useEffect(() => {
         initData();
-    }, [initData]);
+
+        if(props.location.search === "?openChat=true") {
+            setMessageOpen(true);
+        }
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
+        console.log(Object.keys(profileData).length);
+        
+
+        if (Object.keys(profileData).length > 0) {
+            initConvMsg();
+        }
+        // eslint-disable-next-line
+    }, [profileData])
 
     const actionButtonClickHandler = async () => {
-        switch(buttonState) {
+        switch (buttonState) {
             case 0:
                 // Follow
                 await firebase.firestore()
@@ -117,13 +135,87 @@ const User = ({ t, ...props }: any) => {
         initData();
     }
 
+    const initConv = async () => {
+        let conversation: any;
+
+        conversation = await firebase.firestore().collection(CONVERSATION)
+                .where('creator', '==', currentUser.uid)
+                .where('member', '==', profileData.id)
+                .limit(1)
+                .get();
+
+        if (conversation.empty) {
+            conversation = await firebase.firestore().collection(CONVERSATION)
+                .where('member', '==', currentUser.uid)
+                .where('creator', '==', profileData.id)
+                .limit(1)
+                .get();
+        }
+
+        let newConv = false;
+
+        if (conversation.empty) {
+            // Create new conversation
+            conversation = await firebase.firestore().collection(CONVERSATION)
+                .add({
+                    creator: currentUser.uid,
+                    member: profileData.id,
+                    createdAt: new Date().toISOString()
+                });
+
+            newConv = true;
+        }
+
+        if (!newConv) {
+            conversation = conversation.docs[0];
+        }
+
+        return conversation;
+    }
+
+    const initConvMsg = async () => {
+        let conversation = await initConv();
+        
+        firebase.firestore().collection(CONVERSATION).doc(conversation.id).collection(CONVERSATION_MSGS)
+            .orderBy('postedAt', 'asc')
+            .onSnapshot((querySnap) => {
+                const msgs: any = [];
+                
+                querySnap.forEach(doc => {
+                    msgs.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        author: doc.data().author === currentUser.uid ? 'me' : 'them',
+                    });
+                })
+
+                setMsgs(msgs);
+            })
+    }
+
+
+    const onMessageWasSentHandler = async (msg: any) => {
+        let conversation = await initConv();
+
+        // Create the message
+        await firebase.firestore()
+            .collection(CONVERSATION)
+            .doc(conversation.id)
+            .collection(CONVERSATION_MSGS)
+            .add({
+                ...msg,
+                postedAt: new Date().toISOString(),
+                author: currentUser.uid
+            });
+    }
+
     return (
         <div className={classes.User}>
             <div className={classes.Container}>
                 {!profileLoading ? (
                     <React.Fragment>
                         <div className={classes.ProfileArea}>
-                            <img src={!profileData.photoURL || profileData.photoURL === '' ?  defaultAvatar : profileData.photoURL} alt="User's avatar" />
+                            <img src={!profileData.photoURL || profileData.photoURL === '' ? defaultAvatar : profileData.photoURL} alt="User's avatar" />
                             <h1>@{profileData.username}</h1>
 
                             <div className={classes.DataArea}>
@@ -151,6 +243,19 @@ const User = ({ t, ...props }: any) => {
                         <div className={classes.ContentArea}>
                             <PostsTab userId={profileData.id} />
                         </div>
+                        <Launcher
+                            agentProfile={{
+                                teamName: `@${profileData.username}`,
+                                imageUrl: !profileData.photoURL || profileData.photoURL === '' ? defaultAvatar : profileData.photoURL + '-/preview/25x25/'
+                            }}
+                            showEmoji={false}
+                            isOpen={messageOpen}
+                            messageList={msgs}
+                            handleClick={() => {
+                                setMessageOpen(!messageOpen)
+                            }}
+                            onMessageWasSent={onMessageWasSentHandler}
+                        />
                     </React.Fragment>
                 ) : <Spinner />}
             </div>

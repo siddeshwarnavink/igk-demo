@@ -44,6 +44,7 @@ const PostItem = (props: any) => {
         if (word[0] === '@') {
             return <React.Fragment>{` `}<Link to={`${USER_URI}${word.substr(1)}`}>{word}</Link>{` `}</React.Fragment>
         } else if (word.substring(0, 5) === "http:" || word.substring(0, 6) === "https:") {
+            // eslint-disable-next-line
             return <React.Fragment>{` `}<a target="_blank" href={word}>{word}</a>{` `}</React.Fragment>
         }
 

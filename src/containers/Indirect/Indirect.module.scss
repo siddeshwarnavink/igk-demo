@@ -1,0 +1,20 @@
+.Indirect {
+    -webkit-animation: fading .5s;
+    animation: fading .5s;
+    margin: auto;
+    max-width: 500px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+
+    .Content {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width:600px) {
+    .Indirect {
+        margin: 0;
+    }
+}

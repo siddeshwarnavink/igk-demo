@@ -25,6 +25,7 @@ const Home = () => {
         });
 
         loadPosts();
+        // eslint-disable-next-line
     }, []);
 
     const loadPosts = async () => {
