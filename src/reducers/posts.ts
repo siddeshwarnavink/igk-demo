@@ -1,4 +1,4 @@
-import { SET_POSTS, ADD_POST, LIKE_POST } from '../constants/actions';
+import { SET_POSTS, ADD_POST, LIKE_POST, ADD_POST_TOP } from '../constants/actions';
 import { Post } from '../components/Posts/Posts.model';
 
 export default (state: any, action: any) => {
@@ -19,6 +19,17 @@ export default (state: any, action: any) => {
                     {
                         ...action.post
                     },
+                ]
+            }
+
+        case ADD_POST_TOP:
+            return {
+                ...state,
+                posts: [
+                    {
+                        ...action.post
+                    },
+                    ...state.posts,
                 ]
             }
 

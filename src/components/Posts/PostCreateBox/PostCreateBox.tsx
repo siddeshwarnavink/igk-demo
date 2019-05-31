@@ -4,7 +4,7 @@ import { translate } from 'react-switch-lang';
 import classes from './PostCreateBox.module.scss';
 import firebase from '../../../global/firebase';
 import StateContext from '../../../context/state-context';
-import { ADD_POST } from '../../../constants/actions';
+import { ADD_POST_TOP } from '../../../constants/actions';
 import { POSTS, COMMENTS } from '../../../constants/fbCollections';
 import Uploader from '../../Uploader/Uploader';
 
@@ -13,11 +13,13 @@ const PostCreateBox = ({ t, ...props }: any) => {
     const dispatch = stateContext[1];
     const currentUser: any = firebase.auth().currentUser;
     const [content, setContent] = useState('');
-    const [image, setImage] = useState('')
+    const [image, setImage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const createPostHandler = (event: any) => {
         event.preventDefault();
         
+        setLoading(true);
 
         let postData: any = {
             content,
@@ -42,14 +44,20 @@ const PostCreateBox = ({ t, ...props }: any) => {
             ...postData
         }).then(() => {
             dispatch({
-                type: ADD_POST,
+                type: ADD_POST_TOP,
                 post: {
                     ...postData,
                     creator: {
                         username: currentUser.displayName
                     }
                 }
-            })
+            });
+
+            if (props.type === "comment") {
+                window.location.reload();                
+            }
+
+            setLoading(false);
         })
     }
 
@@ -62,7 +70,7 @@ const PostCreateBox = ({ t, ...props }: any) => {
                     placeholder={`${t('posts.postBoxPlaceholder')}, @${currentUser.displayName}`}
                     value={content}
                 ></textarea>
-                <button type="submit">{t("posts.postBoxButton")}</button>
+                <button disabled={loading} type="submit">{t("posts.postBoxButton")}</button>
                 <Uploader 
                     id="image"
                     name="image"
