@@ -1,19 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { translate } from 'react-switch-lang';
 
 import classes from './PostItem.module.scss';
 import defaultAvatar from '../../../static/images/default-avatar.png';
 import StateContext from '../../../context/state-context';
 import { USER_URI, POST_URI } from '../../../constants/navigation';
-import { LIKE_ICON, COMMENT_ICON } from '../../../constants/icons';
+import { LIKE_ICON, COMMENT_ICON, EDIT_ICON, CLOSE_ICON } from '../../../constants/icons';
 import { LIKE_POST } from '../../../constants/actions';
 import { POSTS, POST_LIKE, COMMENTS } from '../../../constants/fbCollections';
 import firebase from '../../../global/firebase';
 
-const PostItem = (props: any) => {
+const PostItem = ({ t, ...props }: any) => {
     const stateContext: any = useContext(StateContext);
     const dispatch = stateContext[1];
     const currentUser: any = firebase.auth().currentUser;
+    const [editMode, setEditMode] = useState(false);
+    const [newContent, setNewContent] = useState('');
 
     const onLikeButtonPressedHandler = async () => {
         if (!props.liked) {
@@ -51,6 +54,41 @@ const PostItem = (props: any) => {
         return <React.Fragment>{` `}{word}{` `}</React.Fragment>;
     });
 
+    const onUpdatePostHandler = async () => {
+        await firebase.firestore()
+            .collection(props.type === "comment" ? COMMENTS : POSTS)
+            .doc(props.postId)
+            .update({
+                content: newContent 
+            });
+
+        window.location.reload();
+    }
+
+    const onDeletePost = async () => {
+        if (window.confirm(t('posts.deleteMsg'))) {
+            await firebase.firestore()
+                .collection(props.type === "comment" ? COMMENTS : POSTS)
+                .doc(props.postId)
+                .delete();
+
+            if (props.type !== "comment") {
+                const postComments = await firebase.firestore()
+                        .collection(COMMENTS)
+                        .where('payload', '==', props.postId)
+                        .get();
+
+                postComments.forEach(commentDoc => {
+                    commentDoc.ref.delete();
+                });
+            }
+
+            alert("Post Deleted!");
+
+            window.location.reload();
+        }
+    }
+
     return (
         <div className={classes.PostItem}>
             <div className={classes.AvatarSection}>
@@ -70,7 +108,13 @@ const PostItem = (props: any) => {
             )}
 
             <div className={classes.PostContent}>
-                {content}
+                {editMode ? (
+                    <React.Fragment>
+                        <textarea style={{ width: '92%' }} value={newContent} onChange={(e) => setNewContent(e.target.value)}></textarea>
+                        <button onClick={onUpdatePostHandler}>{t("posts.saveBtn")}</button>
+                        {` `}<a href="javascript:void(0)" onClick={onDeletePost}>{t("posts.removeBtn")}</a>
+                    </React.Fragment>
+                ) : content}
             </div>
 
             <div className={classes.PostLinks}>
@@ -88,9 +132,20 @@ const PostItem = (props: any) => {
                         </i>
                     </button>
                 )}
+
+                {currentUser.uid === props.creator.id && (
+                    <button className="flat" style={{ color: '#333' }} onClick={() => {
+                        setNewContent(props.content);
+                        setEditMode(!editMode);
+                    }}>
+                        <i className="material-icons">
+                            {editMode ? CLOSE_ICON : EDIT_ICON}
+                        </i>
+                    </button>
+                )}
             </div>
         </div>
     )
 }
 
-export default withRouter(PostItem);
+export default withRouter(translate(PostItem));

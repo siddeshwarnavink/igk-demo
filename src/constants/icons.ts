@@ -4,3 +4,5 @@ export const COMMENT_ICON = "comment";
 export const POSTS_ICON = "notes";
 export const PHOTOS_ICON = "photo_library";
 export const INDIRECT_ICON = "send";
+export const EDIT_ICON = "edit";
+export const CLOSE_ICON = "close";

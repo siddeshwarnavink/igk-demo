@@ -20,7 +20,10 @@
     "posts": {
         "postBoxPlaceholder": "Whats up",
         "postBoxButton": "Post",
-        "noPosts": "No more to see!"
+        "noPosts": "No more to see!",
+        "deleteMsg": "Are you sure to delete this post?",
+        "saveBtn": "Save",
+        "removeBtn": "Remove"
     }, 
 
     "profile": {
