@@ -146,7 +146,7 @@ const User = ({ t, ...props }: any) => {
                 .limit(1)
                 .get();
 
-        if (conversation.empty) {
+        if (conversation.empty && (currentUser.uid !== profileData.id)) {
             conversation = await firebase.firestore().collection(CONVERSATION)
                 .where('member', '==', currentUser.uid)
                 .where('creator', '==', profileData.id)
@@ -277,7 +277,7 @@ const User = ({ t, ...props }: any) => {
                         <div className={classes.ContentArea}>
                             <PostsTab userId={profileData.id} />
                         </div>
-                        <Launcher
+                        {(currentUser.uid !== profileData.id) && <Launcher
                             agentProfile={{
                                 teamName: `@${profileData.username}`,
                                 imageUrl: !profileData.photoURL || profileData.photoURL === '' ? defaultAvatar : profileData.photoURL + '-/preview/25x25/'
@@ -290,7 +290,7 @@ const User = ({ t, ...props }: any) => {
                             }}
                             onMessageWasSent={onMessageWasSentHandler}
                             onFilesSelected={onFilesSelectedHandler}
-                        />
+                        />}
                     </React.Fragment>
                 ) : <Spinner />}
             </div>
