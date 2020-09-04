@@ -13,7 +13,7 @@
     "add": "^2.0.6",
     "classnames": "^2.2.6",
     "firebase": "^6.0.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "randombytes": "^2.1.0",
     "react": "^16.8.6",
     "react-chat-window": "^1.2.1",
